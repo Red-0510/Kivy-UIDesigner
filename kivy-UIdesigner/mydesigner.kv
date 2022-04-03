@@ -1,0 +1,62 @@
+<ScreenLayout>:
+    orientation:'vertical'
+    drawing_area:_drawing_area
+    add_button:_add_button
+    DrawingSpace:
+        size_hint:1,1
+        id:_drawing_area
+        canvas:
+            Line:
+                rectangle:0,0,self.width-4,self.height-4
+    Add_Button:
+        # text:'Add Layout'
+        # pos_hint:{'center_x':.5,'center_y':.5}
+        size_hint:1,.2
+        id:_add_button
+<Add_Button>:
+    name:_name
+    type:_type
+    args:_args
+    button:_add_button
+    BoxLayout:
+        orientation:'vertical'
+        BoxLayout:
+            orientation:'horizontal'
+            Label:
+                text:"Name"
+            TextInput:
+                id:_name
+                # rowheight_force_default:True
+                multiline:False
+                text:''
+            Label:
+                text:"type"
+            TextInput:
+                id:_type
+                # rowheight_force_default:True
+                multiline:False
+                text:''
+        BoxLayout:
+            orientation:'horizontal'
+            Label:
+                text:'Arguments'
+                size_hint:0.3,1
+            TextInput:
+                id:_args
+                multiline:False
+                text:''
+        ToggleButton:
+            id:_add_button 
+            text:'Add Element'
+            pos_hint:{'center_x':.5,"center_y":.5}
+            size_hint:0.6,1
+        
+
+<My_RelativeLayout>:
+    # pos:self.pos
+    # size:self.size
+    canvas:
+        Color:
+            rgba:.8,.8,.8,1
+        Line:
+            rectangle:0,0,self.size[0],self.size[1]

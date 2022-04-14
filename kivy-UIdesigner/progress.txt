@@ -7,5 +7,8 @@ approach:add button->selets all properties of the desired element
 done add button
 done passing arguments from user and dropping RL
 done widgetize func
-next: add parent argument
-next: func to add elements as per parent in self.children
+done: add parent argument 
+        done: problem:adding layout in a inside parent layout shrinks it 
+done: func to add elements as per parent in self.children
+done : make boxlayout, button, label, textinput
+next: make selecting and deleting and movable widget

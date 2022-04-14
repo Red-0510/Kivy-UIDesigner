@@ -7,7 +7,10 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.graphics import Line
 from kivy.uix.textinput import TextInput
 from ast import literal_eval
+from kivy.lang import Builder
+from layouts import my_button,my_label,my_relative_layout,my_text_input
 
+Builder.load_file("./layouts/layout.kv")
 class ScreenLayout(BoxLayout):
     pass
 class DrawingSpace(RelativeLayout):
@@ -18,7 +21,7 @@ class DrawingSpace(RelativeLayout):
         self.name=None
         self.type=None
         self.args=None
-        self.heirarchy={}
+        self.heirarchy={'root':self}
         super(DrawingSpace,self).__init__(**kwargs)
     def on_touch_down(self, touch):
         if self.parent.add_button.button.state=='down' and self.collide_point(touch.x,touch.y):
@@ -49,18 +52,42 @@ class DrawingSpace(RelativeLayout):
             self.canvas.remove(self.figure)
             x,y=self.to_widget(touch.x, touch.y)
             self.widgetize(x,y)
+            self.figure=None
         return super().on_touch_up(touch)
     def widgetize(self,x,y):
-        pos=(self.i_x,y,x,self.i_y)
+        if self.parent.add_button.parent_object.text=='':
+            pos=(self.i_x,y,x-self.i_x,self.i_y-y)
+            parent_object=self
+        else:
+            parent_object=self.heirarchy[self.parent.add_button.parent_object.text]
+            pos=(self.i_x-parent_object.x,y-parent_object.y,x-self.i_x,self.i_y-y)
         if self.type=="RL":
-            layout=My_RelativeLayout(pos,self,self.args)
-            self.add_widget(layout)
+            layout=my_relative_layout.My_Relative_Layout(pos,parent_object,self.args)
+        elif self.type=="BL":
+            layout=my_button.My_Button_Layout(pos,parent_object,self.args)
+        elif self.type=='LL':
+            layout=my_label.My_Label_Layout(pos,parent_object,self.args)
+        elif self.type=='TI':
+            layout=my_text_input.My_Text_Input(pos,parent_object,self.args)
+        self.parent.add_button.name.text=''
+        self.parent.add_button.button.state='normal'
+        self.i_x,self.i_y=None,None
+        parent_object.heirarchy[self.name]=layout
+        parent_object.add_widget(layout)
+        # self.show_heirarchy()
+    def show_heirarchy(self):
+        print('///////////////')
+        for k,v in self.heirarchy.items():
+            if k=='root':
+                print(k,v)
+                continue
+            print("---->")
+            print(k,v)
+            for k1,v1 in v.heirarchy.items():
+                print("----------->",k1,v1)
+        print('///////////////')
     
-class My_RelativeLayout(RelativeLayout):
-    def __init__(self,pos,ds,keys,**kwargs):
-        poshints={'x':pos[0]/ds.width,'y':pos[1]/ds.height}
-        size=((pos[2]-pos[0])/ds.width,(pos[3]-pos[1])/ds.height)
-        super(My_RelativeLayout,self).__init__(pos_hint=poshints,size_hint=size,**keys,**kwargs)
+
 
 class Add_Button(RelativeLayout):
     def __init__(self,**kwargs):

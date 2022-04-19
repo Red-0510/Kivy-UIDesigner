@@ -1,28 +1,50 @@
-<ScreenLayout>:
-    orientation:'vertical'
-    drawing_area:_drawing_area
-    add_button:_add_button
-    DrawingSpace:
-        size_hint:1,1
-        id:_drawing_area
-        canvas:
-            Line:
-                rectangle:0,0,self.width-4,self.height-4
-    Add_Button:
-        # text:'Add Layout'
-        # pos_hint:{'center_x':.5,'center_y':.5}
-        size_hint:1,.2
-        id:_add_button
+<LayoutManager>:
+    layout_button:_layout_button
+    BoxLayout:
+        drawing_area:_drawing_area
+        add_button:_add_button
+        orientation:'vertical'
+        DrawingSpace:
+            size_hint:1,1
+            id:_drawing_area
+            canvas:
+                Color:
+                    rgba:1,1,1,1
+                Rectangle:
+                    pos:0,0
+                    size:self.size
+                Color:
+                    rgba:0,0,0,1
+                Line:
+                    rectangle:0,0,self.width-2,self.height-2
+        Add_Button:
+            # text:'Add Layout'
+            # pos_hint:{'center_x':.5,'center_y':.5}
+            size_hint:1,.2
+            id:_add_button
+            canvas:
+                Line:
+                    rectangle:0,0,self.width-2,self.height-2
+        Button:
+            size_hint:.7,.1
+            pos_hint:{'center_x':.5}
+            id:_layout_button
+            text:"Done"
+            on_press:_drawing_area.go_to_App_Screen(self)
 <Add_Button>:
     name:_name
     type:_type
     args:_args
     button:_add_button
     parent_object:_parent
+    delete_button:_delete_button
     BoxLayout:
         orientation:'vertical'
         BoxLayout:
             orientation:'horizontal'
+            canvas:
+                Line:
+                    rectangle:0,0,self.width-2,self.height-2
             Label:
                 text:"Name"
             TextInput:
@@ -43,7 +65,6 @@
                 # rowheight_force_default:True
                 multiline:False
                 text:''
-            
         BoxLayout:
             orientation:'horizontal'
             Label:
@@ -53,9 +74,37 @@
                 id:_args
                 multiline:True
                 text:''
-        ToggleButton:
-            id:_add_button 
-            text:'Add Element'
-            pos_hint:{'center_x':.5,"center_y":.5}
-            size_hint:0.6,1
-        
+        BoxLayout:
+            orientation:'horizontal'
+            ToggleButton:
+                id:_add_button 
+                text:'Add Element'
+                size_hint:0.5,1
+            Button:
+                id:_delete_button
+                text:"Delete Previous widget"
+                size_hint:0.5,1
+                on_press:root.parent.drawing_area.delete_widget(self)
+
+<App_Screen>:
+    background:_background
+    BoxLayout:
+        orientation:'vertical'
+        RelativeLayout:
+            id:_background
+            canvas:
+                Line:
+                    rectangle:0,0,self.width-2,self.height-2
+                Color:
+                    rgba:1,1,1,1
+                Rectangle:
+                    size:self.size
+                    pos:0,0
+
+        Button:
+            id:_change_layout
+            text:"Change Layout"
+            size_hint:.7,.1
+            pos_hint:{'center_x':0.5}
+            on_press:root.change_layout(self)
+    

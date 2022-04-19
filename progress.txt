@@ -14,5 +14,8 @@ done : make boxlayout, button, label, textinput
 done: function to get element by id name 
 done:a dictionary so we can save the layout and call external function 
         that creates the UI using that dictionary(self.layout in DrawingSpace)
-next:build two screens one for change layout and other for logic of the UI
-next: deleting and movable widget
+done:build two screens one for change layout and other for logic of the UI
+done: deleting last created widget
+done: regulate jumping b/w change_layout and app_screen
+next:implement the UI of an example of application of project(invoice generation)
+problem:maintain the total sum of prices 

@@ -1,12 +1,13 @@
+from dataclasses import fields
 import kivy
 from kivy.app import App 
-from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.stacklayout import StackLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.togglebutton import ToggleButton
-from kivy.graphics import Line
+from kivy.graphics import Line,Color
 from kivy.uix.textinput import TextInput
-from ast import literal_eval
+from ast import Try, literal_eval
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager,Screen,SlideTransition
 from layouts import my_button,my_label,my_relative_layout,my_text_input
@@ -40,7 +41,10 @@ class DrawingSpace(RelativeLayout):
                     'Add_item': {'parent': 'Functional_buttons', 'type': 'BL', 'arguments': {'markup': 'True', 'font_size': '25sp', 'text': '[b]Add Item[/b]'}, 'size_hint': [0.3053435114503817, 0.8367346938775504], 'pos_hint': {'x': 0.005089058524173028, 'y': 0.08163265306122391}}, 
                     'Total_up': {'parent': 'Functional_buttons', 'type': 'BL', 'arguments': {'markup': 'True', 'font_size': '25sp', 'text': '[b]Total Up[/b]'}, 'size_hint': [0.356234096692112, 0.8163265306122444], 'pos_hint': {'x': 0.3155216284987278, 'y': 0.10204081632653003}},
                     'Print': {'parent': 'Functional_buttons', 'type': 'BL', 'arguments': {'markup': 'True', 'font_size': '25sp', 'text': '[b]Print[/b]'}, 'size_hint': [0.32061068702290074, 0.7959183673469382], 'pos_hint': {'x': 0.6755725190839694, 'y': 0.12244897959183615}},
-                    }#{"id":{parent,type,arguments,pos_hints,size_hints}}
+                    'Data_box': {'parent': '', 'type': 'RL', 'arguments': {}, 'size_hint': [0.9725, 0.4658333333333334], 'pos_hint': {'x': 0.0125, 'y': 0.18316666666666662}}, 
+                    'Grand_total': {'parent': '', 'type': 'LL', 'arguments': {'markup': 'True', 'font_size': '25sp', 'text': '[b]Grand Total :[/b]'}, 'size_hint': [0.175, 0.04983333333333327], 'pos_hint': {'x': 0.65875, 'y': 0.129}}, 
+                    'Grand_total_value': {'parent': '', 'type': 'LL', 'arguments': {'font_size': '25sp', 'text': ''}, 'size_hint': [0.14875, 0.04983333333333327], 'pos_hint': {'x': 0.8375, 'y': 0.129}}
+                    } #{"id":{parent,type,arguments,pos_hints,size_hints}}
         super(DrawingSpace,self).__init__(**kwargs)
     def on_touch_down(self, touch):
         if self.parent.add_button.button.state=='down' and self.collide_point(touch.x,touch.y):
@@ -58,12 +62,14 @@ class DrawingSpace(RelativeLayout):
 
     def draw(self,x,y):
         with self.canvas:
+            Color(0,0,0,1)
             self.figure=Line(rectangle=(x,y,1,1))
     def on_touch_move(self, touch):
         if self.figure and self.collide_point(touch.x,touch.y):
             x,y=self.to_widget(touch.x,touch.y)
             self.canvas.remove(self.figure)
             with self.canvas:
+                Color(0,0,0,1)
                 self.figure=Line(rectangle=(self.i_x,self.i_y,x-self.i_x,y-self.i_y))
         return super().on_touch_move(touch)
     def on_touch_up(self, touch):
@@ -107,8 +113,7 @@ class DrawingSpace(RelativeLayout):
             print(k,v)
     def go_to_App_Screen(self,button):
         # print('Generating Layout')
-        print(self.heirarchy)
-        print(self.layout)
+        # print(self.layout)
         self.parent.parent.parent.current='app_screen'
         self.parent.parent.parent.app_screen.generate_layout(self.layout)
     def delete_widget(self,button):
@@ -148,6 +153,7 @@ class Window_Manager(ScreenManager):
         self.add_widget(self.layout_screen)
         self.add_widget(self.app_screen)
         self.layout_screen.ids._drawing_area.initialize_layout()
+        self.logic_block=Logic_Block(self.app_screen,self.layout_screen)
         self.current="app_screen"
 class MyDesignerApp(App):
     def build(self):
@@ -190,4 +196,66 @@ class App_Screen(Screen):
             widget=self.layout.pop(name)
             widget.parent.remove_widget(widget)
 
+
+
+
+class Item_Data(BoxLayout):
+    def __init__(self,logic_block,**kwargs):
+        self.logic_block=logic_block
+        super(Item_Data,self).__init__(**kwargs)
+    def update(self,entry,field):
+        if self in self.logic_block.item_data:
+            if field=='quantity' and entry.text!='':
+                self.logic_block.item_data[self]['quantity']=int(entry.text)
+            elif field=='rate' and entry.text!='':
+                self.logic_block.item_data[self]['rate']=float(entry.text)
+            else:
+                self.logic_block.item_data[self][field]=entry.text
+        else:
+            quantity=0
+            rate=0
+            try:
+                quantity=int(self.quantity.text)
+                print(quantity,type(quantity))
+                rate=float(self.rate.text)
+                print(rate,type(rate))
+            except:
+                pass
+            self.logic_block.item_data[self]={'item_name':self.item_name.text,'quantity':quantity,'rate':rate,'total':0}
+        #print(self.logic_block.item_data)
+class Logic_Block():
+    def __init__(self,app_screen,layout_screen):
+        self.item_data={}
+        self.total=0
+        self.app_screen=app_screen
+        self.layout_screen=layout_screen
+        self.add_button=self.app_screen.get_element_by_id("Add_item")
+        self.total_button=self.app_screen.get_element_by_id("Total_up")
+        self.print_button=self.app_screen.get_element_by_id("Print")
+        self.grand_total=self.app_screen.get_element_by_id("Grand_total_value")
+        data_box=self.app_screen.get_element_by_id("Data_box")
+        self.add_button.bind(on_press=self.add_item)
+        self.total_button.bind(on_press=self.total_up)
+        self.print_button.bind(on_press=self.print_data)
+        self.box=StackLayout(orientation="tb-lr",size_hint=(1,1))
+        self.data=Item_Data(self)
+        self.box.add_widget(self.data)
+        data_box.add_widget(self.box)
+    def add_item(self,button):
+        self.total_up(None)
+        self.data=Item_Data(self)
+        self.box.add_widget(self.data)
+    def total_up(self,button):
+        self.total=0
+        for k,v in self.item_data.items():
+            if v['quantity']!=0 and v['rate']!=0:
+                v['total']=v['quantity']*v['rate']
+                if v['total']!='':
+                    self.total+=v['total']
+                k.total.text=str(v['total'])
+        self.grand_total.text=str(self.total)
+        
+    def print_data(self,button):
+        #to save the data in file or to print the data 
+        pass
 MyDesignerApp().run()

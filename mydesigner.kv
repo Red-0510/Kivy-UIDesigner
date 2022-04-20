@@ -107,4 +107,38 @@
             size_hint:.7,.1
             pos_hint:{'center_x':0.5}
             on_press:root.change_layout(self)
+
+<Item_Data>:
+    orientation:'horizontal'
+    size_hint:1,.13
+    item_name:_item_name
+    quantity:_quantity
+    rate:_rate
+    total:_total
+    TextInput:
+        id:_item_name
+        multiline:False
+        size_hint:.65,1
+        on_text:root.update(self,'item_name')
+    TextInput:
+        size_hint:.27,1
+        id:_quantity
+        multiline:False
+        on_text:root.update(self,'quantity')
+    TextInput:
+        size_hint:.26,1
+        id:_rate
+        multiline:False
+        on_text:root.update(self,'rate')
+    Label:
+        id:_total
+        font_size:'15sp'
+        color:0,0,0,1
+        size_hint:.23,1
+        canvas:
+            Color:
+                rgba:0,0,0,1
+            Line:
+                rectangle:self.pos[0],self.pos[1],self.size[0],self.size[1]
+
     

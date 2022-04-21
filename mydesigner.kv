@@ -126,7 +126,8 @@
 
 <Item_Data>:
     orientation:'horizontal'
-    size_hint:1,.13
+    size_hint:1,None
+    height:'25dp'
     item_name:_item_name
     quantity:_quantity
     rate:_rate
@@ -156,5 +157,11 @@
                 rgba:0,0,0,1
             Line:
                 rectangle:self.pos[0],self.pos[1],self.size[0],self.size[1]
-
+StackLayout:
+    canvas.after:
+        Color:
+            rgba:1,0,0,1
+        Rectangle:
+            size:self.size
+            pos:self.pos
     

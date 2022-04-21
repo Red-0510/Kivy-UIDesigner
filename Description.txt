@@ -1,0 +1,36 @@
+									AMOC 2022 Project							
+
+TEAM NAME: DEARTH
+
+Project: Building an UI designer that 
+				helps design GUI apps layout
+				(provided example : invoice app)
+
+Bried Of Idea:
+		Many times while creating GUI apps, designing 
+		the layout and implementing that layout elements
+		position-coordinates is troublesome for developers
+		UI-Designers is GUI app that helps simplify the task
+		of designing the layout and placing them 
+		on the interface using drag-drop method
+		My Project uses the basic elements like
+		RelativeLayout,Button,Label,TextInput(to input data)
+		to implement simple GUI and thus separating the task of
+		desigining of layout and the actual logic or 
+		data processing.
+
+Tech Stacks Used: Python,KvLang,Kivy and 
+							auto-py-to-exe to convert to .exe
+		
+			why kivy?
+				-->kivy helps to build platform independent GUI apps
+					Hence we dont have to write some separate code for ios,
+					android,windows or other platform.
+
+
+// Elements keywords
+
+RL==RELATIVELAYOUT
+BL==BUTTONLAYOUT
+LL==LABELLAYOUT
+TI==TEXTINPUT
